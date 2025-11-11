@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc_template/presentation/features/settings/widgets/dark_theme_switch.dart';
+import '../settings.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -19,7 +19,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             spacing: 16,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [DarkThemeSwitch()],
+            children: [DarkThemeSwitch(), 
+            LanguageSelector(),
+            ],
           ),
         ),
       ),

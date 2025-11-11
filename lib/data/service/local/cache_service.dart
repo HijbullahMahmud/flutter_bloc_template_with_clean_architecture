@@ -1,4 +1,4 @@
-enum CacheKey { theme, accessToken, refreshToken, tokenExpiry }
+enum CacheKey { theme, accessToken, refreshToken, tokenExpiry , savedLanguage}
 
 abstract class CacheService {
   Future<void> save<T>(CacheKey key, T value);

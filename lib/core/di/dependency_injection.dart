@@ -19,6 +19,8 @@ import 'package:flutter_bloc_template/presentation/core/router/app_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../presentation/core/app_state/localization_state/localization_state.dart';
+
 final injector = GetIt.instance;
 
 Future<void> initDependencies() async {
@@ -51,6 +53,11 @@ void initDataSource() {
     () => ThemeLocalDatasourceImpl(cacheService: injector.get<CacheService>()),
   );
 
+  injector.registerFactory<LocalizationDatasource>(
+    () =>
+        LocalizationDatasourceImpl(cacheService: injector.get<CacheService>()),
+  );
+
   // Posts
   injector.registerFactory<PostLocalDatasource>(
     () => PostLocalDatasourceImpl(localDb: injector.get<LocalDb>()),
@@ -66,6 +73,12 @@ void initDataSource() {
 void initRepositories() {
   injector.registerFactory<ThemeRepository>(
     () => ThemeRepositoryImpl(datasource: injector.get<ThemeLocalDatasource>()),
+  );
+
+  injector.registerFactory<LocalizationRepository>(
+    () => LocalizationRepositoryImpl(
+      datasource: injector.get<LocalizationDatasource>(),
+    ),
   );
 
   // Posts
@@ -86,6 +99,15 @@ void initUseCases() {
     () => SetThemeUseCase(repository: injector.get<ThemeRepository>()),
   );
 
+  //localization
+  injector.registerFactory<GetSavedLanguage>(
+    () => GetSavedLanguage(repository: injector.get<LocalizationRepository>()),
+  );
+
+  injector.registerFactory<SaveLanguage>(
+    () => SaveLanguage(repository: injector.get<LocalizationRepository>()),
+  );
+
   // Post
   injector.registerFactory<GetPostsUsecase>(
     () => GetPostsUsecase(repository: injector.get<PostRepository>()),
@@ -98,6 +120,13 @@ void initBlocs() {
     () => ThemeCubit(
       getThemeUseCase: injector.get<GetThemeUseCase>(),
       setThemeUseCase: injector.get<SetThemeUseCase>(),
+    ),
+  );
+
+  injector.registerFactory<LocalizationCubit>(
+    () => LocalizationCubit(
+      getSavedLanguage: injector.get<GetSavedLanguage>(),
+      saveLanguage: injector.get<SaveLanguage>(),
     ),
   );
 }
