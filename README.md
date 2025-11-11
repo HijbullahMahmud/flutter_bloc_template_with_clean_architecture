@@ -96,6 +96,10 @@ Error handling:
 
 ## 🖼️ Screenshots
 
+<p align="center">
+   <img src="screenshots/post_list_screen.png" width="600" alt="Posts list screen" />
+</p>
+
 - `screenshots/post_list_screen.png` — shows the Posts list screen with search, pull-to-refresh, and infinite scroll.
 
 ## 🏗️ Project Structure
