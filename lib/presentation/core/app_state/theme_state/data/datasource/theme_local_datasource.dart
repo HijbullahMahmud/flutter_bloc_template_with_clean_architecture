@@ -1,4 +1,4 @@
-import 'package:flutter_bloc_template/data/service/cache/cache_service.dart';
+import 'package:flutter_bloc_template/data/service/local/cache_service.dart';
 import 'package:flutter_bloc_template/presentation/core/app_state/theme_state/domain/entities/app_theme.dart';
 
 abstract class ThemeLocalDatasource {

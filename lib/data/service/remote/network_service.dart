@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_bloc_template/core/core/error/custom_error.dart';
+import 'package:flutter_bloc_template/core/base/error/custom_error.dart';
 
 abstract class NetworkService {
   Future<Either<CustomError, Response>> get(

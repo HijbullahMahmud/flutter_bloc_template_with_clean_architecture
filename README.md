@@ -34,34 +34,73 @@ This template is particularly useful for:
 - Secure token management system
 - Automatic token refresh mechanism
 - Authentication state handling
+- Cross-platform support (iOS, Android, Web, macOS, Linux, Windows)
+- Secure token management system
+- Automatic token refresh mechanism
+- Authentication state handling
 
 ## 🔐 Authentication & Token Management
 
-The template includes a robust authentication system with the following features:
+The template includes a robust authentication system with secure token handling and refresh flows. Key points:
 
 ### Token Management
 
-- Secure token storage using encrypted storage
-- Access token and refresh token handling
-- Automatic token refresh mechanism
-- Token expiration management
-- Secure token removal on logout
+- Access token and refresh token support
+- Token storage abstraction (implementations can use secure/encrypted storage)
+- Token rotation and secure removal on logout
 
 ### Authentication Flow
 
-- Implements standard OAuth 2.0 token-based authentication
-- Automatic handling of 401 unauthorized responses
-- Silent token refresh in the background
-- Session management with automatic logout on token expiration
-- Secure storage of authentication credentials
+- Handles 401 responses by attempting a silent refresh using a refresh token
+- Provides an `onTokenRefresh` callback hook used by the network layer to retry failed requests after refresh
+- Session management with optional automatic logout on irrecoverable auth failures
 
 ### Implementation Details
 
-- Token interceptor for automatic token injection in requests
-- Refresh token interceptor for handling token expiration
-- Concurrent request handling during token refresh
-- Token rotation security measures
-- Encrypted storage for sensitive data
+- `TokenManager` + `TokenInterceptor` integrated in `DioNetworkServiceImpl`
+- `onTokenRefresh` callback is supported to coordinate refresh logic from the DI layer
+- Concurrent-request handling: requests wait for an ongoing refresh to complete to avoid multiple refresh calls
+- Storage and rotation are implemented in a modular way so you can replace the storage backend (e.g., secure storage)
+
+## 📰 Posts feature
+
+This template includes a ready-to-use "Posts" feature that demonstrates:
+
+- Loading paginated data from a public API (JSONPlaceholder)
+- Local search across the currently loaded posts
+- Pull-to-refresh and infinite scrolling (load more when user reaches near bottom)
+- Proper error handling and user-friendly retry UI
+
+Implementation highlights:
+
+- Endpoint: `GET https://jsonplaceholder.typicode.com/posts` (configured at `lib/core/utility/api_endpoints.dart`)
+- Pagination: query params `_page` and `_limit` (the `PostBloc` uses `_limit = 10` and manages `_page`)
+- UI: `PostScreen` (route: `Routes.postsScreen` — `/posts`) includes a search bar, `RefreshIndicator`, and a `ListView` with infinite scroll
+- Searching: search happens locally on the loaded posts (no extra network calls) and is handled by the bloc's `_filterPosts` method
+- Screenshot: `screenshots/post_list_screen.png` shows the posts list UI
+
+## 🌐 Networking & Dio error handling
+
+Networking is implemented with Dio and a small service layer (`DioNetworkServiceImpl`) that:
+
+- Wraps Dio calls and returns a typed `Either<CustomError, Response>` to the domain layer
+- Adds `TokenInterceptor` when a `TokenManager` is provided to automatically inject auth headers and handle token refresh
+- Provides `onTokenRefresh` callback support so DI layer code can perform refresh and tell the network service to retry
+
+Error handling:
+
+- Centralized in `lib/core/base/error/error_handler.dart`
+- Translates `DioException` types into a `CustomError` with friendly messages and an `ErrorType` (timeout, network, server, unauthorized, notFound, etc.)
+- Handles connection errors, timeouts, HTTP status codes (400/401/403/404/5xx), and unknown errors
+- The repository and usecase layers return these errors up to blocs, which show friendly UI and retry options
+
+## 🖼️ Screenshots
+
+<p align="center">
+   <img src="screenshots/post_list_screen.png" width="300" alt="Posts list screen" />
+</p>
+
+- `screenshots/post_list_screen.png` — shows the Posts list screen with search, pull-to-refresh, and infinite scroll.
 
 ## 🏗️ Project Structure
 

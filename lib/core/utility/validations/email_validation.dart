@@ -1,0 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc_template/core/extensions/app_localization.dart';
+import 'package:flutter_bloc_template/core/utility/validations/validation.dart';
+
+class EmailValidation extends Validation<String> {
+  @override
+  String? validate(BuildContext context, String? value) {
+    final emailRegex = RegExp(r'^[\w-\.]+(\+[\w-\.]+)?@([\w-]+\.)+[\w-]{2,4}$');
+
+    if (value == null) return null;
+
+    if (!emailRegex.hasMatch(value)) {
+      return context.locale.validEmail;
+    }
+
+    return null;
+  }
+}
