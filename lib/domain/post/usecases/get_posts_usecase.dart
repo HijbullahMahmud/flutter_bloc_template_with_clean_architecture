@@ -8,6 +8,6 @@ class GetPostsUsecase {
 
   GetPostsUsecase({required this.repository});
 
-  Future<Either<CustomError, List<Post>>> call({required String endPoint}) =>
+  Future<Either<Failure, List<Post>>> call({required String endPoint}) =>
       repository.getPosts(endPoint: endPoint);
 }

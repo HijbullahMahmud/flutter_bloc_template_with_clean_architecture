@@ -1,12 +1,12 @@
 import 'package:flutter_bloc_template/core/base/error/error_type.dart';
 
-class CustomError {
+class Failure {
   final String message;
   final int? statusCode;
   final ErrorType type;
   final dynamic data;
 
-  CustomError({
+  Failure({
     required this.message,
     this.statusCode,
     required this.type,

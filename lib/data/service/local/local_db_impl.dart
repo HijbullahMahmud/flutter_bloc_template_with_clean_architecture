@@ -1,4 +1,3 @@
-import 'package:flutter_bloc_template/data/post/models/post_isar.dart';
 import 'package:flutter_bloc_template/data/service/local/local_db.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -35,7 +34,7 @@ class LocalDbImpl implements LocalDb {
     try {
       final dir = await getApplicationDocumentsDirectory();
       _db = Isar.openSync(
-        [PostIsarSchema],
+        [],
         directory: dir.path,
         name: "bloc_template_app_db",
         maxSizeMiB: 1024,

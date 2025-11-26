@@ -1,9 +1,6 @@
-import 'package:flutter_bloc_template/data/post/datasources/local/post_local_datasource.dart';
 import 'package:flutter_bloc_template/data/post/datasources/remote/post_remote_datasource.dart';
 import 'package:flutter_bloc_template/data/post/repositories/post_repository_impl.dart';
 import 'package:flutter_bloc_template/data/service/local/cache_service.dart';
-import 'package:flutter_bloc_template/data/service/local/local_db.dart';
-import 'package:flutter_bloc_template/data/service/local/local_db_impl.dart';
 import 'package:flutter_bloc_template/data/service/local/shared_preference_service.dart';
 import 'package:flutter_bloc_template/data/service/remote/dio_network_service_impl.dart';
 import 'package:flutter_bloc_template/data/service/remote/network_service.dart';
@@ -17,6 +14,7 @@ import 'package:flutter_bloc_template/presentation/core/app_state/theme_state/do
 import 'package:flutter_bloc_template/presentation/core/app_state/theme_state/presentation/bloc/theme_cubit.dart';
 import 'package:flutter_bloc_template/presentation/core/router/app_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../presentation/core/app_state/localization_state/localization_state.dart';
@@ -25,9 +23,9 @@ final injector = GetIt.instance;
 
 Future<void> initDependencies() async {
   // Singleton database instance
-  final localDb = LocalDbImpl();
-  await localDb.initialize();
-  injector.registerSingleton<LocalDb>(localDb);
+  // final localDb = LocalDbImpl();
+  // await localDb.initialize();
+  // injector.registerSingleton<LocalDb>(localDb);
 
   // Shared Preferences
   final sharedPrefs = await SharedPreferences.getInstance();
@@ -35,12 +33,21 @@ Future<void> initDependencies() async {
     () => SharedPreferenceService(prefs: sharedPrefs),
   );
 
+  // Path
+
+  // ✅ Get cache path BEFORE app starts
+  final cacheDir = await getTemporaryDirectory();
+
   //Remote
   injector.registerLazySingleton<TokenManager>(
     () => TokenManager(injector.get<CacheService>()),
   );
+
   injector.registerLazySingleton<NetworkService>(
-    () => DioNetworkServiceImpl(tokenManager: injector.get<TokenManager>()),
+    () => DioNetworkServiceImpl(
+      cachePath: cacheDir.path,
+      tokenManager: injector.get<TokenManager>(),
+    ),
   );
 
   // Router
@@ -59,9 +66,7 @@ void initDataSource() {
   );
 
   // Posts
-  injector.registerFactory<PostLocalDatasource>(
-    () => PostLocalDatasourceImpl(localDb: injector.get<LocalDb>()),
-  );
+
   injector.registerFactory<PostRemoteDatasource>(
     () => PostRemoteDatasourceImpl(
       networkService: injector.get<NetworkService>(),
@@ -85,7 +90,6 @@ void initRepositories() {
   injector.registerFactory<PostRepository>(
     () => PostRepositoryImpl(
       remoteDatasource: injector.get<PostRemoteDatasource>(),
-      localDatasource: injector.get<PostLocalDatasource>(),
     ),
   );
 }

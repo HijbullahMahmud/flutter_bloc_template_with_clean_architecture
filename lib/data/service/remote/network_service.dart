@@ -3,38 +3,36 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc_template/core/base/error/custom_error.dart';
 
 abstract class NetworkService {
-  Future<Either<CustomError, Response>> get(
+  Future<Either<Failure, Response>> get(
     String url, {
     Map<String, dynamic>? queryParameters,
     Options? options,
+    bool forceRefresh = false,
+    Duration? cacheDuration,
   });
 
-  Future<Either<CustomError, Response>> post(
+  Future<Either<Failure, Response>> post(
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
   });
 
-  Future<Either<CustomError, Response>> put(
+  Future<Either<Failure, Response>> put(
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
   });
 
-  Future<Either<CustomError, Response>> delete(
+  Future<Either<Failure, Response>> delete(
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
   });
 
-  Future<Either<CustomError, Response>> patch(
+  Future<Either<Failure, Response>> patch(
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
   });
 
   void addHeader(String key, String value);
